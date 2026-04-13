@@ -5,6 +5,7 @@ obj/
 .codex
 .codex/
 .avalonia-build-tasks/
+NOTES.md
 
 *.user
 *.suo
