@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+.vscode/
+.codex
+.codex/
+.avalonia-build-tasks/
+
+*.user
+*.suo
+
+*.log
+*.tmp

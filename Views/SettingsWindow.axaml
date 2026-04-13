@@ -1,0 +1,118 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MailForwarder.ViewModels"
+        x:Class="MailForwarder.Views.SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
+        Title="設定"
+        Width="980"
+        Height="720"
+        MinWidth="980"
+        MinHeight="720"
+        WindowStartupLocation="CenterOwner">
+  <Grid Margin="20" RowDefinitions="*,Auto,140">
+    <Grid ColumnDefinitions="*,*">
+      <Border Margin="0,0,6,0" BorderBrush="#D8E3EC" BorderThickness="1" CornerRadius="10" Padding="12">
+        <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+          <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,12" FontSize="16" FontWeight="SemiBold" Text="POP3" />
+          <TextBlock Grid.Row="1" Margin="0,0,10,10" VerticalAlignment="Center" Text="ホスト" />
+          <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" Text="{Binding Settings.Pop3.Host}" />
+
+          <TextBlock Grid.Row="2" Margin="0,0,10,10" VerticalAlignment="Center" Text="ポート" />
+          <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,10" Text="{Binding Settings.Pop3.Port}" />
+
+          <TextBlock Grid.Row="3" Margin="0,0,10,10" VerticalAlignment="Center" Text="ユーザー名" />
+          <TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,0,10" Text="{Binding Settings.Pop3.Username}" />
+
+          <TextBlock Grid.Row="4" Margin="0,0,10,10" VerticalAlignment="Center" Text="パスワード" />
+          <TextBox x:Name="Pop3PasswordTextBox"
+                   Grid.Row="4"
+                   Grid.Column="1"
+                   Margin="0,0,0,10"
+                   Text="{Binding Settings.Pop3.Password}"
+                   PasswordChar="*" />
+
+          <CheckBox Grid.Row="5"
+                    Grid.Column="1"
+                    Margin="0,0,0,10"
+                    Content="パスワードを表示"
+                    IsChecked="False"
+                    Checked="Pop3ShowPasswordChanged"
+                    Unchecked="Pop3ShowPasswordChanged" />
+
+          <CheckBox Grid.Row="6" Grid.Column="1" Content="SSLを使用" IsChecked="{Binding Settings.Pop3.UseSsl}" />
+        </Grid>
+      </Border>
+
+      <Border Grid.Column="1" Margin="6,0,0,0" BorderBrush="#D8E3EC" BorderThickness="1" CornerRadius="10" Padding="12">
+        <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+          <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,12" FontSize="16" FontWeight="SemiBold" Text="SMTP" />
+          <TextBlock Grid.Row="1" Margin="0,0,10,10" VerticalAlignment="Center" Text="ホスト" />
+          <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" Text="{Binding Settings.Smtp.Host}" />
+
+          <TextBlock Grid.Row="2" Margin="0,0,10,10" VerticalAlignment="Center" Text="ポート" />
+          <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,10" Text="{Binding Settings.Smtp.Port}" />
+
+          <TextBlock Grid.Row="3" Margin="0,0,10,10" VerticalAlignment="Center" Text="ユーザー名" />
+          <TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,0,10" Text="{Binding Settings.Smtp.Username}" />
+
+          <TextBlock Grid.Row="4" Margin="0,0,10,10" VerticalAlignment="Center" Text="パスワード" />
+          <TextBox x:Name="SmtpPasswordTextBox"
+                   Grid.Row="4"
+                   Grid.Column="1"
+                   Margin="0,0,0,10"
+                   Text="{Binding Settings.Smtp.Password}"
+                   PasswordChar="*" />
+
+          <CheckBox Grid.Row="5"
+                    Grid.Column="1"
+                    Margin="0,0,0,10"
+                    Content="パスワードを表示"
+                    IsChecked="False"
+                    Checked="SmtpShowPasswordChanged"
+                    Unchecked="SmtpShowPasswordChanged" />
+
+          <CheckBox Grid.Row="6" Grid.Column="1" Content="SSLを使用" IsChecked="{Binding Settings.Smtp.UseSsl}" />
+        </Grid>
+      </Border>
+    </Grid>
+
+    <Grid Grid.Row="1" Margin="0,12,0,12" ColumnDefinitions="*,Auto">
+      <Border Margin="0,0,12,0" BorderBrush="#D8E3EC" BorderThickness="1" CornerRadius="10" Padding="12">
+        <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto,Auto,Auto">
+          <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,12" FontSize="16" FontWeight="SemiBold" Text="転送" />
+          <TextBlock Grid.Row="1" Margin="0,0,10,10" VerticalAlignment="Center" Text="転送先アドレス" />
+          <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" Text="{Binding Settings.Forward.ToAddress}" />
+
+          <TextBlock Grid.Row="2" Margin="0,0,10,10" VerticalAlignment="Center" Text="確認間隔（分）" />
+          <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,10" Text="{Binding Settings.Forward.PollIntervalMinutes}" />
+
+          <CheckBox Grid.Row="3" Grid.Column="1" Content="転送後にサーバから削除" IsChecked="{Binding Settings.Forward.DeleteAfterForward}" />
+        </Grid>
+      </Border>
+
+      <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+        <Button Width="120" Margin="0,0,10,0" Click="TestPop3Clicked" Content="POP3接続確認" />
+        <Button Width="120" Margin="0,0,10,0" Click="TestSmtpClicked" Content="SMTP接続確認" />
+        <Button Width="120" Click="SaveClicked" Content="保存" />
+      </StackPanel>
+    </Grid>
+
+    <Border Grid.Row="2"
+            BorderBrush="#D8E3EC"
+            BorderThickness="1"
+            CornerRadius="10"
+            Padding="12">
+      <Grid RowDefinitions="Auto,*">
+        <TextBlock FontSize="16" FontWeight="SemiBold" Text="接続確認結果" />
+        <TextBox Grid.Row="1"
+                 Margin="0,12,0,0"
+                 Text="{Binding TestResultMessage}"
+                 TextWrapping="Wrap"
+                 IsReadOnly="True"
+                 AcceptsReturn="True"
+                 BorderThickness="0"
+                 Background="Transparent" />
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

@@ -1,0 +1,80 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MailForwarder.ViewModels"
+        x:Class="MailForwarder.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="メール自動転送"
+        Width="900"
+        Height="620"
+        MinWidth="780"
+        MinHeight="520">
+  <Grid Margin="20" RowDefinitions="Auto,Auto,*">
+    <Border Padding="16"
+            Background="#F4F8FB"
+            BorderBrush="#D8E3EC"
+            BorderThickness="1"
+            CornerRadius="10">
+      <Grid ColumnDefinitions="*,*,*">
+        <StackPanel>
+          <TextBlock FontSize="12" Foreground="#4B6478" Text="状態" />
+          <TextBlock FontSize="24" FontWeight="SemiBold" Text="{Binding StatusText}" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1">
+          <TextBlock FontSize="12" Foreground="#4B6478" Text="最終確認" />
+          <TextBlock FontSize="18" FontWeight="SemiBold" Text="{Binding LastCheckText}" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="2">
+          <TextBlock FontSize="12" Foreground="#4B6478" Text="最終転送" />
+          <TextBlock FontSize="18" FontWeight="SemiBold" Text="{Binding LastForwardText}" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <StackPanel Grid.Row="1"
+                Margin="0,16,0,16"
+                Orientation="Horizontal"
+                Spacing="10">
+      <Button Width="120" Command="{Binding StartMonitoringCommand}" Content="監視開始" />
+      <Button Width="120" Command="{Binding StopMonitoringCommand}" Content="監視停止" />
+      <Button Width="120" Command="{Binding RunOnceCommand}" Content="1回実行" />
+      <Button Width="120" Command="{Binding OpenSettingsCommand}" Content="設定" />
+    </StackPanel>
+
+    <Border Grid.Row="2"
+            BorderBrush="#D8E3EC"
+            BorderThickness="1"
+            CornerRadius="10"
+            Padding="12">
+      <Grid RowDefinitions="Auto,*">
+        <TextBlock FontSize="16" FontWeight="SemiBold" Text="ログ" />
+        <ListBox Grid.Row="1"
+                 Margin="0,12,0,0"
+                 ItemsSource="{Binding Entries}"
+                 BorderThickness="0"
+                 Background="Transparent">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Border Padding="0,8"
+                      BorderBrush="#E6EDF3"
+                      BorderThickness="0,0,0,1">
+                <Grid ColumnDefinitions="220,90,*">
+                  <TextBlock Grid.Column="0"
+                             Margin="0,0,12,0"
+                             Text="{Binding Timestamp, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" />
+                  <TextBlock Grid.Column="1"
+                             Margin="0,0,12,0"
+                             Text="{Binding Level}" />
+                  <TextBlock Grid.Column="2"
+                             Text="{Binding Message}"
+                             TextWrapping="Wrap" />
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>
