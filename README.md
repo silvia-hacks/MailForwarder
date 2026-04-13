@@ -2,6 +2,10 @@
 
 POP3 で受信したメールを定期的に確認し、指定した宛先へ SMTP で自動転送する Windows デスクトップアプリです。Avalonia UI で構成されており、常駐監視と手動実行の両方に対応しています。
 
+## ダウンロード
+
+- 最新版: [MailForwarder-win-x64.zip](https://github.com/silvia-hacks/MailForwarder/releases/latest/download/MailForwarder-win-x64.zip)
+
 ## 主な機能
 
 - POP3 サーバーからメールを取得
@@ -75,6 +79,19 @@ DOTNET_CLI_HOME=/tmp/dotnet-cli-home dotnet publish -c Release -r win-x64 --self
 生成物:
 
 - `bin/Release/net8.0/win-x64/publish/MailForwarder.exe`
+
+## GitHub Actions 配布
+
+- GitHub Actions で `win-x64` 向けの単一 exe を build し、zip 化します。
+- `v*` 形式のタグを push すると GitHub Release を作成し、`MailForwarder-win-x64.zip` を添付します。
+- 手動実行時は Actions の artifact として zip を取得できます。
+
+例:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
 
 ## 設定ファイルとログ
 

@@ -1,0 +1,64 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    env:
+      PROJECT_PATH: MailForwarder.csproj
+      RUNTIME_ID: win-x64
+      PUBLISH_DIR: publish
+      ZIP_NAME: MailForwarder-win-x64.zip
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore $env:PROJECT_PATH
+
+      - name: Publish
+        run: >
+          dotnet publish $env:PROJECT_PATH
+          -c Release
+          -r $env:RUNTIME_ID
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o $env:PUBLISH_DIR
+
+      - name: Create zip archive
+        shell: pwsh
+        run: |
+          if (Test-Path $env:ZIP_NAME) {
+            Remove-Item $env:ZIP_NAME -Force
+          }
+          Compress-Archive -Path "$env:PUBLISH_DIR\*" -DestinationPath $env:ZIP_NAME
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mailforwarder-win-x64
+          path: ${{ env.ZIP_NAME }}
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ZIP_NAME }}
+          generate_release_notes: true
+
