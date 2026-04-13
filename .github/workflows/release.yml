@@ -3,6 +3,8 @@ name: Build and Release
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     tags:
       - "v*"
 
@@ -61,4 +63,3 @@ jobs:
         with:
           files: ${{ env.ZIP_NAME }}
           generate_release_notes: true
-
