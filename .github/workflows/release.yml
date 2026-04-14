@@ -24,6 +24,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure release tags point to main
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: pwsh
+        run: |
+          git fetch origin main --depth=1
+          git merge-base --is-ancestor $env:GITHUB_SHA origin/main
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Release tags must point to a commit that is already on main."
+            exit 1
+          }
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -42,6 +55,11 @@ jobs:
           -p:PublishSingleFile=true
           -p:IncludeNativeLibrariesForSelfExtract=true
           -o $env:PUBLISH_DIR
+
+      - name: Remove debug symbols from package
+        shell: pwsh
+        run: |
+          Get-ChildItem $env:PUBLISH_DIR -Filter *.pdb -Recurse | Remove-Item -Force
 
       - name: Create zip archive
         shell: pwsh

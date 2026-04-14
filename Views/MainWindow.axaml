@@ -8,7 +8,7 @@
         Height="620"
         MinWidth="780"
         MinHeight="520">
-  <Grid Margin="20" RowDefinitions="Auto,Auto,*">
+  <Grid Margin="20" RowDefinitions="Auto,Auto,*,Auto">
     <Border Padding="16"
             Background="#F4F8FB"
             BorderBrush="#D8E3EC"
@@ -76,5 +76,11 @@
         </ListBox>
       </Grid>
     </Border>
+
+    <TextBlock Grid.Row="3"
+               Margin="0,12,0,0"
+               HorizontalAlignment="Right"
+               Foreground="#6E8191"
+               Text="{Binding ApplicationVersion}" />
   </Grid>
 </Window>

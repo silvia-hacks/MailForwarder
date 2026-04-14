@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>MailForwarder</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>0.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
