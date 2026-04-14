@@ -32,6 +32,8 @@ public sealed class MainViewModel : ViewModelBase
 
     public ObservableCollection<LogEntry> Entries { get; }
 
+    public string ApplicationVersion => $"v{AppVersionService.GetDisplayVersion()}";
+
     public RelayCommand StartMonitoringCommand { get; }
 
     public RelayCommand StopMonitoringCommand { get; }
