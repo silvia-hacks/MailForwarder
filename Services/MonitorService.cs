@@ -32,6 +32,8 @@ public sealed class MonitorService : IDisposable
 
     public bool IsRunning { get; private set; }
 
+    public bool IsCycleRunning { get; private set; }
+
     public DateTimeOffset? LastCheckAt { get; private set; }
 
     public DateTimeOffset? LastForwardAt { get; private set; }
@@ -68,36 +70,37 @@ public sealed class MonitorService : IDisposable
 
     public void ExecuteCycle()
     {
-        if (!_cycleLock.Wait(0))
-        {
-            return;
-        }
-
-        try
-        {
-            ExecuteCycleCore(limitToSingleMessage: false);
-        }
-        finally
-        {
-            _cycleLock.Release();
-        }
+        _ = ExecuteCycleAsync(limitToSingleMessage: false);
     }
 
-    public void ExecuteSingleCycle()
+    public Task ExecuteSingleCycleAsync()
+    {
+        return ExecuteCycleAsync(limitToSingleMessage: true);
+    }
+
+    private Task ExecuteCycleAsync(bool limitToSingleMessage)
     {
         if (!_cycleLock.Wait(0))
         {
-            return;
+            return Task.CompletedTask;
         }
 
-        try
+        IsCycleRunning = true;
+        RaiseStateChanged();
+
+        return Task.Run(() =>
         {
-            ExecuteCycleCore(limitToSingleMessage: true);
-        }
-        finally
-        {
-            _cycleLock.Release();
-        }
+            try
+            {
+                ExecuteCycleCore(limitToSingleMessage);
+            }
+            finally
+            {
+                IsCycleRunning = false;
+                RaiseStateChanged();
+                _cycleLock.Release();
+            }
+        });
     }
 
     private void ExecuteCycleCore(bool limitToSingleMessage)
