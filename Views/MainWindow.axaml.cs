@@ -10,6 +10,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Icon = AppIconService.LoadWindowIcon();
         Opened += OnOpened;
         Closing += OnClosing;
     }

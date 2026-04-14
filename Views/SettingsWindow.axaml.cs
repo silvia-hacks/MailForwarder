@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using MailForwarder.Services;
 using MailForwarder.ViewModels;
 
 namespace MailForwarder.Views;
@@ -10,6 +11,7 @@ public partial class SettingsWindow : Window
     public SettingsWindow()
     {
         InitializeComponent();
+        Icon = AppIconService.LoadWindowIcon();
     }
 
     private void InitializeComponent()
