@@ -2,9 +2,15 @@ namespace MailForwarder.Models;
 
 public sealed class AppSettings
 {
+    public GeneralSettings General { get; set; } = new();
     public Pop3Settings Pop3 { get; set; } = new();
     public SmtpSettings Smtp { get; set; } = new();
     public ForwardSettings Forward { get; set; } = new();
+}
+
+public sealed class GeneralSettings
+{
+    public bool LaunchOnWindowsStartup { get; set; }
 }
 
 public sealed class Pop3Settings

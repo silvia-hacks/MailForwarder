@@ -9,6 +9,7 @@ public sealed class SettingsViewModel : ViewModelBase
     private readonly LogService _logService;
     private readonly MailReceiveService _mailReceiveService;
     private readonly MailForwardService _mailForwardService;
+    private readonly StartupRegistrationService _startupRegistrationService;
     private AppSettings _settings;
     private string _testResultMessage = "まだ接続確認を実行していません。";
     private bool _isTestResultError;
@@ -17,13 +18,20 @@ public sealed class SettingsViewModel : ViewModelBase
         SettingsService settingsService,
         LogService logService,
         MailReceiveService mailReceiveService,
-        MailForwardService mailForwardService)
+        MailForwardService mailForwardService,
+        StartupRegistrationService startupRegistrationService)
     {
         _settingsService = settingsService;
         _logService = logService;
         _mailReceiveService = mailReceiveService;
         _mailForwardService = mailForwardService;
+        _startupRegistrationService = startupRegistrationService;
         _settings = _settingsService.Load();
+        if (OperatingSystem.IsWindows())
+        {
+            _settings.General.LaunchOnWindowsStartup = _startupRegistrationService.IsEnabled();
+        }
+
         SaveCommand = new RelayCommand(_ => Save());
         TestPop3Command = new RelayCommand(_ => TestPop3());
         TestSmtpCommand = new RelayCommand(_ => TestSmtp());
@@ -58,6 +66,7 @@ public sealed class SettingsViewModel : ViewModelBase
     private void Save()
     {
         _settingsService.Save(Settings);
+        _startupRegistrationService.Apply(Settings.General.LaunchOnWindowsStartup);
         _logService.AddInfo("設定を保存しました。");
         Saved?.Invoke(this, EventArgs.Empty);
     }

@@ -1,9 +1,12 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using MailForwarder.Services;
 using MailForwarder.ViewModels;
 using MailForwarder.Views;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MailForwarder;
 
@@ -12,6 +15,9 @@ public partial class App : Application
     private MainWindow? _mainWindow;
     private TrayIconHost? _trayIconHost;
     private NotificationService? _notificationService;
+    private EventWaitHandle? _activateMainWindowEvent;
+    private CancellationTokenSource? _activateMainWindowCts;
+    private Task? _activateMainWindowTask;
 
     public bool IsExitRequested { get; private set; }
 
@@ -42,6 +48,7 @@ public partial class App : Application
         };
         _trayIconHost = new TrayIconHost(_mainWindow, mainViewModel);
         _notificationService = new NotificationService(_mainWindow, _trayIconHost, LogService);
+        StartActivateMainWindowListener();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -58,11 +65,45 @@ public partial class App : Application
     public void RequestShutdown()
     {
         IsExitRequested = true;
+        StopActivateMainWindowListener();
         _trayIconHost?.Dispose();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.Shutdown();
         }
+    }
+
+    private void StartActivateMainWindowListener()
+    {
+        _activateMainWindowEvent = Program.CreateActivationEvent();
+        _activateMainWindowCts = new CancellationTokenSource();
+        var cancellationToken = _activateMainWindowCts.Token;
+
+        _activateMainWindowTask = Task.Run(() =>
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                _activateMainWindowEvent.WaitOne();
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                Dispatcher.UIThread.Post(() => _trayIconHost?.ShowMainWindow());
+            }
+        }, cancellationToken);
+    }
+
+    private void StopActivateMainWindowListener()
+    {
+        _activateMainWindowCts?.Cancel();
+        _activateMainWindowEvent?.Set();
+        _activateMainWindowEvent?.Dispose();
+        _activateMainWindowEvent = null;
+        _activateMainWindowCts?.Dispose();
+        _activateMainWindowCts = null;
+        _activateMainWindowTask = null;
     }
 }

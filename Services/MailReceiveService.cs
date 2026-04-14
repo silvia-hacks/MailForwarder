@@ -10,6 +10,14 @@ public sealed class MailReceiveService
 {
     public ConnectionTestResult TestConnection(AppSettings settings)
     {
+        if (!AppRuntimeOptions.EnableProtocolLogging)
+        {
+            using var client = new Pop3Client();
+            ConnectAndAuthenticate(client, settings);
+            client.Disconnect(true);
+            return new ConnectionTestResult();
+        }
+
         var protocolLogPath = CreateProtocolLogPath("pop3-test");
         try
         {

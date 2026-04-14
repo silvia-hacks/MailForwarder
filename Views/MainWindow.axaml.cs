@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using MailForwarder.Services;
 using MailForwarder.ViewModels;
 
 namespace MailForwarder.Views;
@@ -9,6 +10,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Icon = AppIconService.LoadWindowIcon();
         Opened += OnOpened;
         Closing += OnClosing;
     }
@@ -33,7 +35,8 @@ public partial class MainWindow : Window
             app.SettingsService,
             app.LogService,
             app.MailReceiveService,
-            app.MailForwardService);
+            app.MailForwardService,
+            new StartupRegistrationService());
 
         var window = new SettingsWindow
         {

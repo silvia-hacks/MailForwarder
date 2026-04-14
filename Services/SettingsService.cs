@@ -54,6 +54,10 @@ public sealed class SettingsService
     {
         return new AppSettings
         {
+            General = new GeneralSettings
+            {
+                LaunchOnWindowsStartup = fileModel.General.LaunchOnWindowsStartup
+            },
             Pop3 = new Pop3Settings
             {
                 Host = fileModel.Pop3.Host,
@@ -83,6 +87,10 @@ public sealed class SettingsService
     {
         return new SettingsFileModel
         {
+            General = new GeneralSettingsFileModel
+            {
+                LaunchOnWindowsStartup = settings.General.LaunchOnWindowsStartup
+            },
             Pop3 = new Pop3SettingsFileModel
             {
                 Host = settings.Pop3.Host,
@@ -155,9 +163,15 @@ public sealed class SettingsService
 
     private sealed class SettingsFileModel
     {
+        public GeneralSettingsFileModel General { get; set; } = new();
         public Pop3SettingsFileModel Pop3 { get; set; } = new();
         public SmtpSettingsFileModel Smtp { get; set; } = new();
         public ForwardSettingsFileModel Forward { get; set; } = new();
+    }
+
+    private sealed class GeneralSettingsFileModel
+    {
+        public bool LaunchOnWindowsStartup { get; set; }
     }
 
     private sealed class Pop3SettingsFileModel
