@@ -85,6 +85,8 @@ DOTNET_CLI_HOME=/tmp/dotnet-cli-home dotnet publish -c Release -r win-x64 --self
 - GitHub Actions で `win-x64` 向けの単一 exe を build し、zip 化します。
 - `v*` 形式のタグを push すると GitHub Release を作成し、`MailForwarder-win-x64.zip` を添付します。
 - 手動実行時は Actions の artifact として zip を取得できます。
+- 配布している exe にはコード署名を付与していないため、Windows で初回実行時に `不明な発行元` や SmartScreen の警告が表示される場合があります。
+- 警告が表示された場合は、内容を確認したうえで `詳細情報` から実行してください。
 
 例:
 
@@ -116,6 +118,7 @@ Windows では保存時にパスワードを DPAPI で保護します。
 - POP3 のため、サーバー側フォルダ同期や IMAP 特有の状態管理は行いません。
 - 重複判定は主に `Message-Id` を使用し、無い場合は差出人・件名・日時の組み合わせで代替します。
 - SMTP の差出人アドレスは、基本的に SMTP ユーザー名、なければ POP3 ユーザー名から推定します。
+- Windows 配布物は未署名のため、ダウンロード後の初回起動時にセキュリティ警告が表示されることがあります。
 
 ## リポジトリ
 
