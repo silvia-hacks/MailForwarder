@@ -77,6 +77,12 @@ dotnet restore
 dotnet run
 ```
 
+詳細な POP3 接続テストログが必要な場合は、`--verbose` を付けて起動します。
+
+```bash
+dotnet run -- --verbose
+```
+
 ## Windows 向け publish
 
 ```bash

@@ -1,4 +1,5 @@
 using Avalonia;
+using MailForwarder.Services;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -13,6 +14,8 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        AppRuntimeOptions.EnableProtocolLogging = args.Contains("--verbose", StringComparer.OrdinalIgnoreCase);
+
         if (!TryAcquireSingleInstance())
         {
             SignalExistingInstance();
