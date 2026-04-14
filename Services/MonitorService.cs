@@ -122,22 +122,28 @@ public sealed class MonitorService : IDisposable
             _logService.AddInfo($"POP3から {messages.Count} 件のメールを取得しました。");
 
             var forwardedIndexes = new List<int>();
+            var skippedTransferredCount = 0;
+            var candidates = new List<ReceivedMessage>();
 
-            var candidates = messages
-                .Where(receivedMessage => !_historyService.HasTransferred(receivedMessage.MessageKey))
-                .ToList();
+            foreach (var receivedMessage in messages)
+            {
+                if (_historyService.HasTransferred(receivedMessage.MessageKey))
+                {
+                    skippedTransferredCount++;
+                    continue;
+                }
+
+                candidates.Add(receivedMessage);
+            }
 
             if (limitToSingleMessage)
             {
                 candidates = candidates.Take(1).ToList();
             }
 
-            foreach (var skippedMessage in messages.Except(candidates))
+            if (skippedTransferredCount > 0)
             {
-                if (_historyService.HasTransferred(skippedMessage.MessageKey))
-                {
-                    _logService.AddInfo($"転送済みのためスキップしました: {skippedMessage.MessageKey}");
-                }
+                _logService.AddInfo($"{skippedTransferredCount} 件のメッセージは転送済みのためスキップしました。");
             }
 
             foreach (var receivedMessage in candidates)
