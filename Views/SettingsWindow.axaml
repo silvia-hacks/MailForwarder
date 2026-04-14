@@ -78,7 +78,7 @@
 
     <Grid Grid.Row="1" Margin="0,12,0,12" ColumnDefinitions="*,Auto">
       <Border Margin="0,0,12,0" BorderBrush="#D8E3EC" BorderThickness="1" CornerRadius="10" Padding="12">
-        <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto,Auto,Auto">
+        <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
           <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,12" FontSize="16" FontWeight="SemiBold" Text="転送" />
           <TextBlock Grid.Row="1" Margin="0,0,10,10" VerticalAlignment="Center" Text="転送先アドレス" />
           <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" Text="{Binding Settings.Forward.ToAddress}" />
@@ -87,6 +87,7 @@
           <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,10" Text="{Binding Settings.Forward.PollIntervalMinutes}" />
 
           <CheckBox Grid.Row="3" Grid.Column="1" Content="転送後にサーバから削除" IsChecked="{Binding Settings.Forward.DeleteAfterForward}" />
+          <CheckBox Grid.Row="4" Grid.Column="1" Content="Windows起動時に自動起動する" IsChecked="{Binding Settings.General.LaunchOnWindowsStartup}" />
         </Grid>
       </Border>
 
