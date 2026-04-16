@@ -27,6 +27,8 @@ public sealed class LogService
 
     public void AddInfo(string message) => Add("情報", message);
 
+    public void AddDebug(string message) => Add("デバッグ", message);
+
     public void AddError(string message) => Add("エラー", message);
 
     private void Add(string level, string message)
@@ -41,7 +43,11 @@ public sealed class LogService
         AppendToFile(entry);
         Dispatcher.UIThread.Post(() =>
         {
-            Entries.Insert(0, entry);
+            if (!string.Equals(entry.Level, "デバッグ", StringComparison.OrdinalIgnoreCase))
+            {
+                Entries.Insert(0, entry);
+            }
+
             EntryAdded?.Invoke(this, entry);
         });
     }
