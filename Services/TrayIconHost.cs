@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using MailForwarder.ViewModels;
 using MailForwarder.Views;
+using System.ComponentModel;
 
 namespace MailForwarder.Services;
 
@@ -42,6 +43,8 @@ public sealed class TrayIconHost : IDisposable
         };
 
         _trayIcon.Clicked += (_, _) => ShowMainWindow();
+        _mainViewModel.PropertyChanged += OnMainViewModelPropertyChanged;
+        UpdateIcon();
     }
 
     public void ShowMainWindow()
@@ -53,6 +56,25 @@ public sealed class TrayIconHost : IDisposable
 
     public void Dispose()
     {
+        _mainViewModel.PropertyChanged -= OnMainViewModelPropertyChanged;
         _trayIcon.Dispose();
+    }
+
+    private void OnMainViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainViewModel.IsMonitoring))
+        {
+            UpdateIcon();
+        }
+    }
+
+    private void UpdateIcon()
+    {
+        var icon = _mainViewModel.IsMonitoring
+            ? AppIconService.LoadMonitoringWindowIcon()
+            : AppIconService.LoadWindowIcon();
+
+        _trayIcon.Icon = icon;
+        _mainWindow.Icon = icon;
     }
 }

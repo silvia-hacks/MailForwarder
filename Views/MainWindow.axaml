@@ -59,23 +59,26 @@
       <Grid RowDefinitions="Auto,*">
         <TextBlock FontSize="16" FontWeight="SemiBold" Text="ログ" />
         <ListBox Grid.Row="1"
-                 Margin="0,12,0,0"
+                 Margin="0,8,0,0"
                  ItemsSource="{Binding Entries}"
                  BorderThickness="0"
                  Background="Transparent">
           <ListBox.ItemTemplate>
             <DataTemplate>
-              <Border Padding="0,8"
+              <Border Padding="0,4"
                       BorderBrush="#E6EDF3"
                       BorderThickness="0,0,0,1">
-                <Grid ColumnDefinitions="220,90,*">
+                <Grid ColumnDefinitions="190,70,*">
                   <TextBlock Grid.Column="0"
-                             Margin="0,0,12,0"
+                             Margin="0,0,8,0"
+                             FontSize="13"
                              Text="{Binding Timestamp, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" />
                   <TextBlock Grid.Column="1"
-                             Margin="0,0,12,0"
+                             Margin="0,0,8,0"
+                             FontSize="13"
                              Text="{Binding Level}" />
                   <TextBlock Grid.Column="2"
+                             FontSize="13"
                              Text="{Binding Message}"
                              TextWrapping="Wrap" />
                 </Grid>

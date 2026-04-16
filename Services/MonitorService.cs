@@ -47,7 +47,7 @@ public sealed class MonitorService : IDisposable
         _timer.Change(TimeSpan.Zero, TimeSpan.FromMinutes(_intervalMinutes));
         IsRunning = true;
 
-        _logService.AddInfo($"監視を開始しました。確認間隔: {_intervalMinutes} 分");
+        _logService.AddInfo($"監視開始 ({_intervalMinutes}分間隔)");
         RaiseStateChanged();
     }
 
@@ -55,7 +55,7 @@ public sealed class MonitorService : IDisposable
     {
         _timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         IsRunning = false;
-        _logService.AddInfo("監視を停止しました。");
+        _logService.AddInfo("監視停止");
         RaiseStateChanged();
     }
 
@@ -106,7 +106,7 @@ public sealed class MonitorService : IDisposable
     private void ExecuteCycleCore(bool limitToSingleMessage)
     {
         LastCheckAt = DateTimeOffset.Now;
-        _logService.AddInfo(limitToSingleMessage ? "メール確認を開始しました。対象は1通です。" : "メール確認を開始しました。");
+        _logService.AddDebug(limitToSingleMessage ? "受信確認開始 (1通)" : "受信確認開始");
 
         var settings = _settingsService.Load();
 
@@ -114,7 +114,7 @@ public sealed class MonitorService : IDisposable
             string.IsNullOrWhiteSpace(settings.Smtp.Host) ||
             string.IsNullOrWhiteSpace(settings.Forward.ToAddress))
         {
-            _logService.AddError("設定が不足しています。POP3、SMTP、転送先アドレスを確認してください。");
+            _logService.AddError("設定不足: POP3 / SMTP / 転送先を確認してください。");
             RaiseStateChanged();
             return;
         }
@@ -122,7 +122,7 @@ public sealed class MonitorService : IDisposable
         try
         {
             var messages = _mailReceiveService.ReceiveMessages(settings);
-            _logService.AddInfo($"POP3から {messages.Count} 件のメールを取得しました。");
+            _logService.AddDebug($"受信 {messages.Count}件");
 
             var forwardedIndexes = new List<int>();
             var skippedTransferredCount = 0;
@@ -146,7 +146,7 @@ public sealed class MonitorService : IDisposable
 
             if (skippedTransferredCount > 0)
             {
-                _logService.AddInfo($"{skippedTransferredCount} 件のメッセージは転送済みのためスキップしました。");
+                _logService.AddDebug($"転送済み {skippedTransferredCount}件をスキップ");
             }
 
             foreach (var receivedMessage in candidates)
@@ -155,18 +155,18 @@ public sealed class MonitorService : IDisposable
                 _historyService.MarkTransferred(receivedMessage.MessageKey);
                 forwardedIndexes.Add(receivedMessage.Index);
                 LastForwardAt = DateTimeOffset.Now;
-                _logService.AddInfo($"転送しました: {receivedMessage.Message.Subject ?? "(件名なし)"}");
+                _logService.AddInfo($"転送: {receivedMessage.Message.Subject ?? "(件名なし)"}");
             }
 
             if (settings.Forward.DeleteAfterForward && forwardedIndexes.Count > 0)
             {
                 _mailReceiveService.DeleteMessages(settings, forwardedIndexes);
-                _logService.AddInfo($"転送済みメールをサーバから {forwardedIndexes.Count} 件削除しました。");
+                _logService.AddInfo($"サーバ削除 {forwardedIndexes.Count}件");
             }
         }
         catch (Exception ex)
         {
-            _logService.AddError($"メール確認に失敗しました: {ex.Message}");
+            _logService.AddError($"受信確認失敗: {ex.Message}");
         }
 
         RaiseStateChanged();

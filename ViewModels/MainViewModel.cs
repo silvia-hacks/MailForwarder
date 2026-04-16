@@ -52,6 +52,8 @@ public sealed class MainViewModel : ViewModelBase
 
     public bool IsExecuting => _monitorService.IsCycleRunning;
 
+    public bool IsMonitoring => _monitorService.IsRunning;
+
     public string LastCheckText => _monitorService.LastCheckAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-";
 
     public string LastForwardText => _monitorService.LastForwardAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-";
@@ -81,6 +83,7 @@ public sealed class MainViewModel : ViewModelBase
         StatusText = _monitorService.IsRunning ? "監視中" : "停止中";
         OnPropertyChanged(nameof(ExecutionStatusText));
         OnPropertyChanged(nameof(IsExecuting));
+        OnPropertyChanged(nameof(IsMonitoring));
         OnPropertyChanged(nameof(LastCheckText));
         OnPropertyChanged(nameof(LastForwardText));
         StartMonitoringCommand.RaiseCanExecuteChanged();
